@@ -4,6 +4,7 @@ import Cities from "./components/Cities";
 import Form from "./components/Form";
 import WeatherInfoContainer from "./components/WeatherInfoContainer";
 import "./App.css";
+import moment from "moment";
 
 function App() {
   const API_KEY = "6f431031b69e6d15eaa035d6258b46db";
@@ -25,75 +26,108 @@ function App() {
 
   // state to hold the weather information
   const [weather, setWeather] = useState([]);
+  const [error, setError] = useState(null);
 
   // initialState is set to the selectedCity property when the app is rendered first
   const initialCity = () => window.localStorage.getItem("city");
   const [selectedCity, setSelectedCity] = useState(initialCity);
+
   // invokes the effect hook only when the selectedCity property is changes and not on every render
   useEffect(() => {
     // when a value is already fetched from the local storage make the API call to fetch the latest weather information
     if (selectedCity) {
-      callWeatherAPI(selectedCity);
+      getForecast(selectedCity);
     }
     window.localStorage.setItem("city", selectedCity);
-  }, [selectedCity]);
+  }, [selectedCity, error]);
 
   async function fetchWeatherData(e) {
     e.preventDefault();
     const city = e.target.city.value;
-    await callWeatherAPI(city);
+    await getForecast(city);
   }
 
   function onCitySelection(e) {
     setSelectedCity(e);
   }
 
-  async function callWeatherAPI(city) {
-    let apiData = {
-      errorText: `Please provide the city name`
-    };
+  async function getForecast(city) {
+    let apiData;
     if (city) {
       apiData = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
       )
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           if (data.cod === "200") {
-            return data;
+            const forecastList = [];
+            if (Object.entries(data).length) {
+              for (let i = 0; i < data.list.length; i += 8) {
+                forecastList.push(processDataToWeather(data.list[i + 4], city));
+              }
+            }
+            return forecastList;
           } else {
-            data.errorText = `We do not have information about ${city} right now. Please enter another city.`;
-            return data;
+            resetState(
+              `We do not have information about ${city} right now. Please enter another city.`
+            );
           }
         });
-      const dailyWeatherData =
-        apiData.list &&
-        apiData.list.filter(reading => reading.dt_txt.includes("18:00:00"));
-      if (dailyWeatherData) {
+
+      if (apiData) {
         // Daily Weather Information is available for the given city
         setWeather({
-          city: apiData.city.name,
-          dateInfoList: dailyWeatherData,
-          error: ""
+          city: apiData[0].city,
+          list: apiData
         });
-        setSelectedCity(apiData.city.name);
+        setSelectedCity(apiData[0].city);
+        setError(null);
       } else {
         // Daily Weather Information is not available for the given city
-        setWeather({
-          city: "",
-          dateInfoList: [],
-          error: apiData.errorText
-        });
-        setSelectedCity("");
+        resetState();
       }
     } else {
-      setWeather({
-        city: "",
-        dateInfoList: [],
-        error: apiData.errorText
-      });
-      setSelectedCity("");
+      resetState(`Please provide the city name`);
     }
+  }
+
+  function resetState(errorMessage) {
+    setWeather({
+      city: "",
+      list: []
+    });
+    setSelectedCity("");
+    errorMessage && setError(errorMessage);
+  }
+
+  function processDataToWeather(data, city) {
+    const processedWeatherRecord = {
+      city: city,
+      date: data.dt * 1000,
+      humidity: data.main.humidity,
+      iconId: data.weather[0].id,
+      temperature: data.main.temp,
+      mainDescription: data.weather[0].main,
+      description: data.weather[0].description,
+      formattedDescription: `${data.weather[0].main} (${data.weather[0].description})`
+    };
+
+    if (data.dt_txt) {
+      processedWeatherRecord.dt_txt = moment(data.dt_txt).format(
+        "MMMM Do YYYY"
+      );
+    }
+
+    if (data.weather[0].icon) {
+      processedWeatherRecord.icon = data.weather[0].icon;
+    }
+
+    if (data.main.temp_min && data.main.temp_max) {
+      processedWeatherRecord.max = data.main.temp_max;
+      processedWeatherRecord.min = data.main.temp_min;
+    }
+
+    return processedWeatherRecord;
   }
 
   return (
@@ -110,6 +144,11 @@ function App() {
         weatherInfo={weather}
         className="container"
       ></WeatherInfoContainer>
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
     </div>
   );
 }
