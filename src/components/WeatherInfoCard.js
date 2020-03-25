@@ -3,6 +3,8 @@ import moment from "moment";
 
 const WeatherInfoCard = props => {
   const currentDate = props.weatherInfo.dt_txt;
+  const currentDescription =
+    props.weatherInfo.weather[0] && props.weatherInfo.weather[0].main;
   return (
     //TODO: Use Fragments
     <div className="card pb-2">
@@ -10,7 +12,7 @@ const WeatherInfoCard = props => {
         {moment(currentDate).format("MMMM Do YYYY")}
       </div>
       <div className="card-desc card-subtitle mb-2 mt-2 text-muted">
-        Description : {props.weatherInfo.weather.pop().main}
+        Description : {currentDescription}
       </div>
       <div className="card-high card-text">
         High : {props.weatherInfo.main.temp_max}
