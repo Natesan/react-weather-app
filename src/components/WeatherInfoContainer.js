@@ -6,7 +6,7 @@ const WeatherInfoContainer = props => {
     props.weatherInfo &&
     props.weatherInfo.dateInfoList &&
     props.weatherInfo.dateInfoList.map(day => (
-      <WeatherInfoCard weatherInfo={day}></WeatherInfoCard>
+      <WeatherInfoCard key={day.dt_txt} weatherInfo={day}></WeatherInfoCard>
     ));
   return (
     <React.Fragment>
