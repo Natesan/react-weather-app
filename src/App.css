@@ -4,5 +4,10 @@
 }
 
 .weather-button {
-  width: 150px;
+  width: 15rem;
+}
+
+.weather-card {
+  min-width: 13rem;
+  max-width: 13rem;
 }

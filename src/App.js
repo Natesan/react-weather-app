@@ -62,9 +62,30 @@ function App() {
         .then(data => {
           if (data.cod === "200") {
             const forecastList = [];
+            let forecastMap = new Map();
             if (Object.entries(data).length) {
-              for (let i = 0; i < data.list.length; i += 8) {
-                forecastList.push(processDataToWeather(data.list[i + 4], city));
+              for (let i = 0; i < data.list.length; i++) {
+                var weatherRecord = {
+                  date: data.list[i].dt_txt.split(" ")[0],
+                  time: data.list[i].dt_txt.split(" ")[1],
+                  dt_txt: moment(data.list[i].dt_txt).format("MMMM Do YYYY"),
+                  max: data.list[i].main.temp_max,
+                  min: data.list[i].main.temp_min,
+                  city: city,
+                  dateTimestamp: data.list[i].dt * 1000,
+                  humidity: data.list[i].main.humidity,
+                  iconId: data.list[i].weather[0].id,
+                  icon: data.list[i].weather[0].icon,
+                  temperature: data.list[i].main.temp,
+                  mainDescription: data.list[i].weather[0].main,
+                  description: data.list[i].weather[0].description,
+                  formattedDescription: `${data.list[i].weather[0].main} (${data.list[i].weather[0].description})`
+                };
+                forecastMap = processWeatherData(forecastMap, weatherRecord);
+              }
+
+              for (let dailyForecast of forecastMap.values()) {
+                forecastList.push(dailyForecast);
               }
             }
             return forecastList;
@@ -101,34 +122,26 @@ function App() {
     errorMessage && setError(errorMessage);
   }
 
-  function processDataToWeather(data, city) {
-    const processedWeatherRecord = {
-      city: city,
-      date: data.dt * 1000,
-      humidity: data.main.humidity,
-      iconId: data.weather[0].id,
-      temperature: data.main.temp,
-      mainDescription: data.weather[0].main,
-      description: data.weather[0].description,
-      formattedDescription: `${data.weather[0].main} (${data.weather[0].description})`
-    };
+  function processWeatherData(forecastMap, day) {
+    if (!forecastMap.has(day.date) && day.time != "00:00:00") {
+      // Not considering 00:00:00 hours since it doesn't provide realistic values to the user interest
+      day.maxTime = day.time;
+      day.minTime = day.time;
+      forecastMap.set(day.date, day);
+    } else if (forecastMap.has(day.date)) {
+      let dateDetails = forecastMap.get(day.date);
 
-    if (data.dt_txt) {
-      processedWeatherRecord.dt_txt = moment(data.dt_txt).format(
-        "MMMM Do YYYY"
-      );
+      if (dateDetails.max <= day.max) {
+        dateDetails.max = day.max;
+        dateDetails.maxTime = day.time;
+      }
+      if (dateDetails.min >= day.min) {
+        dateDetails.min = day.min;
+        dateDetails.minTime = day.time;
+      }
+      forecastMap.set(day.date, dateDetails);
     }
-
-    if (data.weather[0].icon) {
-      processedWeatherRecord.icon = data.weather[0].icon;
-    }
-
-    if (data.main.temp_min && data.main.temp_max) {
-      processedWeatherRecord.max = data.main.temp_max;
-      processedWeatherRecord.min = data.main.temp_min;
-    }
-
-    return processedWeatherRecord;
+    return forecastMap;
   }
 
   return (

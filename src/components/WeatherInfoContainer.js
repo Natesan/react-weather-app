@@ -12,7 +12,9 @@ const WeatherInfoContainer = props => {
     <React.Fragment>
       <h3 className="mb-4">{props.weatherInfo.city}</h3>
       {dailyCards && (
-        <div className="weather-info-container card-deck">{dailyCards}</div>
+        <div className="weather-info-container card-deck d-flex flex-wrap justify-content-center align-content-center">
+          {dailyCards}
+        </div>
       )}
     </React.Fragment>
   );

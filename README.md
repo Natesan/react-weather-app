@@ -3,14 +3,14 @@
 ### Description
 
 - Weather application which lists a set of cities in the United States
-- App should be able to provide the weather information for the next 10 days of a selected city (this has been limited to 5 days due to API limitation)
+- App should be able to provide the weather information for the next 10 days of a selected city (this has been limited to 5 days due to API limitation apart from the current date)
 - Selected city should maintain stickiness across the browser sessions
 - App should be responsive with the cards being stacked on portrait mode and placed horizontally when in landscape mode
 
 ### High Level Design:
 
 - Components used in the app are Title, Form, Cities, WeatherInfoContainer and WeatherInfoCard
-- API for the weather information was provided by Open Weather Map this provides forecast details for the upcoming 5 days
+- API for the weather information was provided by Open Weather Map this provides forecast details for the upcoming 5 days along with the current date
 - Forecasted city would be retained in the browser storage and retrieved on subsequent visits
 
 ### Detailed Design:

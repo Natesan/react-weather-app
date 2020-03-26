@@ -2,7 +2,7 @@ import React from "react";
 
 const WeatherInfoCard = props => {
   return (
-    <div className="card pb-2">
+    <div className="weather-card card border-dark pb-2 my-2">
       <div className="card-date card-header">{props.weatherInfo.dt_txt}</div>
       <div className="card-desc card-subtitle mb-2 mt-2 text-muted">
         {props.weatherInfo.formattedDescription}
