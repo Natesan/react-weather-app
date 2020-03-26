@@ -7,6 +7,7 @@ const WeatherInfoCard = props => {
       <div className="card-desc card-subtitle mb-2 mt-2 text-muted">
         {props.weatherInfo.formattedDescription}
       </div>
+      <div className="card-text mt-1">Temperature (in Celsius)</div>
       <div className="card-high card-text">High : {props.weatherInfo.max}</div>
       <div className="card-low card-text">Low : {props.weatherInfo.min}</div>
     </div>
