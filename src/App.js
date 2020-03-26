@@ -6,6 +6,7 @@ import WeatherInfoContainer from "./components/WeatherInfoContainer";
 import "./App.css";
 import moment from "moment";
 
+// Overarching parent component
 function App() {
   const API_KEY = "6f431031b69e6d15eaa035d6258b46db";
 
