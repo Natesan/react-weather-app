@@ -11,3 +11,7 @@
   min-width: 13rem;
   max-width: 13rem;
 }
+
+.loading-indicator {
+  margin: 3rem;
+}

@@ -3,7 +3,9 @@ import Title from "./components/Title";
 import Cities from "./components/Cities";
 import Form from "./components/Form";
 import WeatherInfoContainer from "./components/WeatherInfoContainer";
+import Loader from "react-loader-spinner";
 import "./App.css";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import moment from "moment";
 
 // Overarching parent component
@@ -28,6 +30,7 @@ function App() {
   // state to hold the weather information
   const [weather, setWeather] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // initialState is set to the selectedCity property when the app is rendered first
   const initialCity = () => window.localStorage.getItem("city");
@@ -55,11 +58,13 @@ function App() {
   async function getForecast(city) {
     let apiData;
     if (city) {
+      setLoading(true);
       apiData = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
       )
         .then(response => response.json())
         .then(data => {
+          setLoading(false);
           if (data.cod === "200") {
             const forecastList = [];
             let forecastMap = new Map();
@@ -119,6 +124,7 @@ function App() {
       list: []
     });
     setSelectedCity("");
+    setLoading(false);
     errorMessage && setError(errorMessage);
   }
 
@@ -150,14 +156,24 @@ function App() {
       <Form getWeather={fetchWeatherData}></Form>
       {/* List a group of Cities */}
       <Cities cityList={cities} onSelection={onCitySelection}></Cities>
-
+      {loading && (
+        <Loader
+          type="Grid"
+          className="loading-indicator"
+          color="#007bff"
+          height={100}
+          width={100}
+        />
+      )}
       {/* Display Weather for the Selected City */}
       {/* or */}
       {/* NTD : Display the weather for a city based on the browser location when there is no selection */}
-      <WeatherInfoContainer
-        weatherInfo={weather}
-        className="container"
-      ></WeatherInfoContainer>
+      {!loading && (
+        <WeatherInfoContainer
+          weatherInfo={weather}
+          className="container"
+        ></WeatherInfoContainer>
+      )}
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
