@@ -163,7 +163,6 @@ function App() {
           color="#007bff"
           height={100}
           width={100}
-          // timeout={10000} //3 secs
         />
       )}
       {/* Display Weather for the Selected City */}
