@@ -129,7 +129,7 @@ function App() {
   }
 
   function processWeatherData(forecastMap, day) {
-    if (!forecastMap.has(day.date) && day.time != "00:00:00") {
+    if (!forecastMap.has(day.date) && day.time !== "00:00:00") {
       // Not considering 00:00:00 hours since it doesn't provide realistic values to the user interest
       day.maxTime = day.time;
       day.minTime = day.time;
