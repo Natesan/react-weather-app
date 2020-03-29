@@ -1,7 +1,8 @@
 import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
 import { act } from "react-dom/test-utils";
-import App from "./App";
+
+import Cities from "./Cities";
 
 let container = null;
 beforeEach(() => {
@@ -17,12 +18,19 @@ afterEach(() => {
   container = null;
 });
 
-it("renders the header of the application with the Get Weather Button", () => {
+const fakeProps = {
+  cities: ["Mountain View", "San Diego", "Los Angeles"],
+  onCitySelection: () => {}
+};
+
+it("cities render without crashing", () => {
   act(() => {
-    render(<App />, container);
+    render(
+      <Cities
+        cityList={fakeProps.cities}
+        onSelection={fakeProps.onCitySelection}
+      ></Cities>,
+      container
+    );
   });
-
-  expect(container.querySelector(".title").textContent).toBe("Weather Now");
-
-  expect(container.querySelector("button").textContent).toBe("Get Weather");
 });
