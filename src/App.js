@@ -13,7 +13,7 @@ function App() {
   const API_KEY = "6f431031b69e6d15eaa035d6258b46db";
 
   // list of cities to be rendered be default
-  const [cities, setCities] = useState([
+  const CITIES = [
     "Mountain View",
     "San Diego",
     "Los Angeles",
@@ -25,7 +25,7 @@ function App() {
     "Tucson",
     "Eagle",
     "Fredericksburg"
-  ]);
+  ];
 
   // state to hold the weather information
   const [weather, setWeather] = useState([]);
@@ -45,16 +45,19 @@ function App() {
     window.localStorage.setItem("city", selectedCity);
   }, [selectedCity, error]);
 
+  // Function which is triggered when the form is submitted
   async function fetchWeatherData(e) {
     e.preventDefault();
     const city = e.target.city.value;
     await getForecast(city);
   }
 
+  // Function which handled the default city click
   function onCitySelection(e) {
     setSelectedCity(e);
   }
 
+  // Function which handles data calls
   async function getForecast(city) {
     let apiData;
     if (city) {
@@ -66,34 +69,7 @@ function App() {
         .then(data => {
           setLoading(false);
           if (data.cod === "200") {
-            const forecastList = [];
-            let forecastMap = new Map();
-            if (Object.entries(data).length) {
-              for (let i = 0; i < data.list.length; i++) {
-                var weatherRecord = {
-                  date: data.list[i].dt_txt.split(" ")[0],
-                  time: data.list[i].dt_txt.split(" ")[1],
-                  dt_txt: moment(data.list[i].dt_txt).format("MMMM Do YYYY"),
-                  max: data.list[i].main.temp_max,
-                  min: data.list[i].main.temp_min,
-                  city: city,
-                  dateTimestamp: data.list[i].dt * 1000,
-                  humidity: data.list[i].main.humidity,
-                  iconId: data.list[i].weather[0].id,
-                  icon: data.list[i].weather[0].icon,
-                  temperature: data.list[i].main.temp,
-                  mainDescription: data.list[i].weather[0].main,
-                  description: data.list[i].weather[0].description,
-                  formattedDescription: `${data.list[i].weather[0].main} (${data.list[i].weather[0].description})`
-                };
-                forecastMap = processWeatherData(forecastMap, weatherRecord);
-              }
-
-              for (let dailyForecast of forecastMap.values()) {
-                forecastList.push(dailyForecast);
-              }
-            }
-            return forecastList;
+            return processWeatherInfo(data, city);
           } else {
             resetState(
               `We do not have information about ${city} right now. Please enter another city.`
@@ -128,7 +104,41 @@ function App() {
     errorMessage && setError(errorMessage);
   }
 
-  function processWeatherData(forecastMap, day) {
+  // Function to massage the API response data and create a map of the details the application is interested in
+  function processWeatherInfo(data, city) {
+    let forecastList = [];
+    let forecastMap = new Map();
+    if (Object.entries(data).length) {
+      for (let i = 0; i < data.list.length; i++) {
+        var weatherRecord = {
+          date: data.list[i].dt_txt.split(" ")[0],
+          time: data.list[i].dt_txt.split(" ")[1],
+          dt_txt: moment(data.list[i].dt_txt).format("MMMM Do YYYY"),
+          max: data.list[i].main.temp_max,
+          min: data.list[i].main.temp_min,
+          city: city,
+          dateTimestamp: data.list[i].dt * 1000,
+          humidity: data.list[i].main.humidity,
+          iconId: data.list[i].weather[0].id,
+          icon: data.list[i].weather[0].icon,
+          temperature: data.list[i].main.temp,
+          mainDescription: data.list[i].weather[0].main,
+          description: data.list[i].weather[0].description,
+          formattedDescription: `${data.list[i].weather[0].main} (${data.list[i].weather[0].description})`
+        };
+        forecastMap = computeWeatherInfo(forecastMap, weatherRecord);
+      }
+
+      for (let dailyForecast of forecastMap.values()) {
+        forecastList.push(dailyForecast);
+      }
+    }
+    return forecastList;
+  }
+
+  // Function to compute the max and min temperature for a given day,
+  // since the API provides information for different hours of the day which needs to be consolidated
+  function computeWeatherInfo(forecastMap, day) {
     if (!forecastMap.has(day.date) && day.time !== "00:00:00") {
       // Not considering 00:00:00 hours since it doesn't provide realistic values to the user interest
       day.maxTime = day.time;
@@ -155,7 +165,7 @@ function App() {
       <Title titleText="Weather Now"></Title>
       <Form getWeather={fetchWeatherData}></Form>
       {/* List a group of Cities */}
-      <Cities cityList={cities} onSelection={onCitySelection}></Cities>
+      <Cities cityList={CITIES} onSelection={onCitySelection}></Cities>
       {loading && (
         <Loader
           type="Grid"
