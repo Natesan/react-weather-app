@@ -15,7 +15,11 @@ const Form = props => {
         ></input>
         <button
           type="submit"
-          className="btn btn-primary form-control weather-button"
+          className={
+            props.darkMode && props.darkMode.value
+              ? "btn btn-success form-control weather-button"
+              : "btn btn-primary form-control weather-button"
+          }
         >
           Get Weather
         </button>

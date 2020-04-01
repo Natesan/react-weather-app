@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Title from "./components/Title";
+import ThemeToggler from "./components/ThemeToggler";
 import Cities from "./components/Cities";
 import Form from "./components/Form";
 import WeatherInfoContainer from "./components/WeatherInfoContainer";
@@ -7,6 +8,7 @@ import Loader from "react-loader-spinner";
 import "./App.css";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import moment from "moment";
+import useDarkMode from "use-dark-mode";
 
 // Overarching parent component
 function App() {
@@ -35,6 +37,9 @@ function App() {
   // initialState is set to the selectedCity property when the app is rendered first
   const initialCity = () => window.localStorage.getItem("city");
   const [selectedCity, setSelectedCity] = useState(initialCity);
+
+  //support for dark theme toggling
+  const darkMode = useDarkMode(false);
 
   // invokes the effect hook only when the selectedCity property is changes and not on every render
   useEffect(() => {
@@ -163,14 +168,19 @@ function App() {
   return (
     <div className="App container text-center">
       <Title titleText="Weather Now"></Title>
-      <Form getWeather={fetchWeatherData}></Form>
+      <ThemeToggler darkMode={darkMode}></ThemeToggler>
+      <Form getWeather={fetchWeatherData} darkMode={darkMode}></Form>
       {/* List a group of Cities */}
-      <Cities cityList={CITIES} onSelection={onCitySelection}></Cities>
+      <Cities
+        cityList={CITIES}
+        onSelection={onCitySelection}
+        darkMode={darkMode}
+      ></Cities>
       {loading && (
         <Loader
           type="Grid"
           className="loading-indicator"
-          color="#007bff"
+          color={darkMode.value ? "#fff" : "#007bff"}
           height={100}
           width={100}
         />
@@ -182,6 +192,7 @@ function App() {
         <WeatherInfoContainer
           weatherInfo={weather}
           className="container"
+          darkMode={darkMode}
         ></WeatherInfoContainer>
       )}
       {error && (
