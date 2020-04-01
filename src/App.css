@@ -15,3 +15,29 @@
 .loading-indicator {
   margin: 3rem;
 }
+
+.theme-toggle {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+}
+
+.light-mode {
+  background-color: #2196f357;
+}
+
+.dark-mode {
+  color: white;
+  background-color: #032705d4;
+}
+
+@media (max-width: 576px) {
+  .title {
+    text-align: left !important;
+    padding-left: 0.5rem;
+  }
+
+  .theme-toggle {
+    right: 1rem;
+  }
+}

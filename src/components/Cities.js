@@ -5,7 +5,11 @@ const Cities = props => {
     <button
       key={city}
       onClick={() => props.onSelection(city)}
-      className="btn btn-outline-dark my-1 mx-1"
+      className={
+        props.darkMode && props.darkMode.value
+          ? "btn btn-success my-1 mx-1"
+          : "btn btn-outline-dark my-1 mx-1"
+      }
     >
       {city}
     </button>
