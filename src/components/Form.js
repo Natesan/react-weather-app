@@ -9,7 +9,7 @@ const Form = props => {
       <div className="form-group d-flex">
         <input
           type="text"
-          placeholder="City"
+          placeholder={props.selectedCity ? props.selectedCity : "City"}
           name="city"
           className="form-control mx-2"
         ></input>
