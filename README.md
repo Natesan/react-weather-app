@@ -52,12 +52,11 @@ npm start
 
 ```
 
-### Special Features (To be built):
+### Advanced Features (To be built):
 
-- Handle the application for low speed networks
 - Advanced search for cities
 - Geo Location API integration
 - Celsius to Fahrenheit Conversion
-- Dark Mode
 - Sharable Content
 - Offline Mode
+- Include middleware to store the cities which the user accessed frequently

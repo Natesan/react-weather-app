@@ -83,7 +83,8 @@ function App() {
         });
 
       if (apiData) {
-        // Daily Weather Information is available for the given city
+        // Daily Weather Information is available for the given city which is here pushed into the state
+        // All other API information that is not required is left out to avoid any undesired information to be available in the state
         setWeather({
           city: apiData[0].city,
           list: apiData
@@ -169,7 +170,11 @@ function App() {
     <div className="App container text-center">
       <Title titleText="Weather Now"></Title>
       <ThemeToggler darkMode={darkMode}></ThemeToggler>
-      <Form getWeather={fetchWeatherData} darkMode={darkMode}></Form>
+      <Form
+        getWeather={fetchWeatherData}
+        darkMode={darkMode}
+        selectedCity={selectedCity}
+      ></Form>
       {/* List a group of Cities */}
       <Cities
         cityList={CITIES}
