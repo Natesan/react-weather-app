@@ -1,18 +1,22 @@
 import React from "react";
 
-const ThemeToggler = props => (
-  <div class="inline-flex theme-toggle" role="group" aria-label="Toggle Theme">
+const ThemeToggler = (props) => (
+  <div
+    className="inline-flex theme-toggle"
+    role="group"
+    aria-label="Toggle Theme"
+  >
     <button
       type="button"
       onClick={props.darkMode.disable}
-      class="btn btn-sm btn-light"
+      className="btn btn-sm btn-light"
     >
       Light
     </button>
     <button
       type="button"
       onClick={props.darkMode.enable}
-      class="btn btn-sm btn-dark"
+      className="btn btn-sm btn-dark"
     >
       Dark
     </button>
