@@ -26,7 +26,7 @@ function App() {
     "California",
     "Tucson",
     "Eagle",
-    "Fredericksburg"
+    "Fredericksburg",
   ];
 
   // state to hold the weather information
@@ -48,7 +48,7 @@ function App() {
       getForecast(selectedCity);
     }
     window.localStorage.setItem("city", selectedCity);
-  }, [selectedCity, error]);
+  }, [selectedCity, error]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Function which is triggered when the form is submitted
   async function fetchWeatherData(e) {
@@ -70,8 +70,8 @@ function App() {
       apiData = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
       )
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           setLoading(false);
           if (data.cod === "200") {
             return processWeatherInfo(data, city);
@@ -87,7 +87,7 @@ function App() {
         // All other API information that is not required is left out to avoid any undesired information to be available in the state
         setWeather({
           city: apiData[0].city,
-          list: apiData
+          list: apiData,
         });
         setSelectedCity(apiData[0].city);
         setError(null);
@@ -103,7 +103,7 @@ function App() {
   function resetState(errorMessage) {
     setWeather({
       city: "",
-      list: []
+      list: [],
     });
     setSelectedCity("");
     setLoading(false);
@@ -130,7 +130,7 @@ function App() {
           temperature: data.list[i].main.temp,
           mainDescription: data.list[i].weather[0].main,
           description: data.list[i].weather[0].description,
-          formattedDescription: `${data.list[i].weather[0].main} (${data.list[i].weather[0].description})`
+          formattedDescription: `${data.list[i].weather[0].main} (${data.list[i].weather[0].description})`,
         };
         forecastMap = computeWeatherInfo(forecastMap, weatherRecord);
       }
