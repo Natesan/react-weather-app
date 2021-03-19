@@ -46,7 +46,7 @@ Clone the repo and setup the application
 # clone the git repo
 git clone https://github.com/Natesan/react-weather-app.git
 
-cd metadata-driven-portfolio/
+cd react-weather-app/
 npm install
 npm start
 
